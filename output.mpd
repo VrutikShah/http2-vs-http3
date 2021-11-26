@@ -1,0 +1,14 @@
+<?xml version="1.0" ?>
+    <MPD xmlns="urn:mpeg:DASH:schema:MPD:2011" type="static" profiles="urn:mpeg:dash:profile:isoff-on-demand:2011" mediaPresentationDuration="PT0H1M52.43S" minBufferTime="PT1.5S">
+        <Period start="PT0S" duration="PT0H1M52.43S">
+            <AdaptationSet>
+                <ContentComponent id="1" contentType="video"/>
+                <Representation width="1920" height="1080" mimeType="video/mp4" codecs="avc1.640028" id="1" bandwidth="4190760">
+                    <BaseURL>motion-20120802-89.mp4</BaseURL>
+                    <SegmentBase indexRange="674-981">
+                        <Initialization range="0-673"/>
+                    </SegmentBase>
+                </Representation>
+            </AdaptationSet>
+        </Period>
+    </MPD>

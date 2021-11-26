@@ -1,0 +1,59 @@
+<?xml version="1.0" ?>
+    <MPD xmlns="urn:mpeg:DASH:schema:MPD:2011" type="static" profiles="urn:mpeg:dash:profile:isoff-on-demand:2011" mediaPresentationDuration="PT0H1M52.43S" minBufferTime="PT1.5S">
+        <Period start="PT0S" duration="PT0H1M52.43S">
+            <AdaptationSet>
+                <ContentComponent id="1" contentType="video"/>
+                <Representation width="1920" height="1080" mimeType="video/mp4" codecs="avc1.640028" id="1" bandwidth="4190760">
+                    <BaseURL>motion-20120802-89.mp4</BaseURL>
+                    <SegmentBase indexRange="674-981">
+                        <Initialization range="0-673"/>
+                    </SegmentBase>
+                </Representation>
+                <Representation width="1280" height="720" mimeType="video/mp4" codecs="avc1.4d401f" id="2" bandwidth="2073921">
+                    <BaseURL>motion-20120802-88.mp4</BaseURL>
+                    <SegmentBase indexRange="672-979">
+                        <Initialization range="0-671"/>
+                    </SegmentBase>
+                </Representation>
+                <Representation width="854" height="480" mimeType="video/mp4" codecs="avc1.4d401e" id="3" bandwidth="869460">
+                    <BaseURL>motion-20120802-87.mp4</BaseURL>
+                    <SegmentBase indexRange="672-979">
+                        <Initialization range="0-671"/>
+                    </SegmentBase>
+                </Representation>
+                <Representation width="640" height="360" mimeType="video/mp4" codecs="avc1.4d401e" id="4" bandwidth="686521">
+                    <BaseURL>motion-20120802-86.mp4</BaseURL>
+                    <SegmentBase indexRange="672-979">
+                        <Initialization range="0-671"/>
+                    </SegmentBase>
+                </Representation>
+                <Representation width="426" height="240" mimeType="video/mp4" codecs="avc1.4d4015" id="5" bandwidth="264835">
+                    <BaseURL>motion-20120802-85.mp4</BaseURL>
+                    <SegmentBase indexRange="672-979">
+                        <Initialization range="0-671"/>
+                    </SegmentBase>
+                </Representation>
+            </AdaptationSet>
+            <AdaptationSet>
+                <ContentComponent id="2" contentType="audio"/>
+                <Representation mimeType="audio/mp4" codecs="mp4a.40.02" id="6" bandwidth="127236">
+                    <BaseURL>motion-20120802-8c.mp4</BaseURL>
+                    <SegmentBase indexRange="592-767">
+                        <Initialization range="0-591"/>
+                    </SegmentBase>
+                </Representation>
+                <Representation mimeType="audio/mp4" codecs="mp4a.40.02" id="7" bandwidth="255236">
+                    <BaseURL>motion-20120802-8d.mp4</BaseURL>
+                    <SegmentBase indexRange="592-767">
+                        <Initialization range="0-591"/>
+                    </SegmentBase>
+                </Representation>
+                <Representation mimeType="audio/mp4" codecs="mp4a.40.03" id="8" bandwidth="31749">
+                    <BaseURL>motion-20120802-8b.mp4</BaseURL>
+                    <SegmentBase indexRange="592-767">
+                        <Initialization range="0-591"/>
+                    </SegmentBase>
+                </Representation>
+            </AdaptationSet>
+        </Period>
+    </MPD>
