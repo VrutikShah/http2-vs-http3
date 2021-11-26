@@ -10,7 +10,7 @@ outDest = 'dash.mpd'
 
 # Generating DASH manifest files
 dash = video.dash(Formats.h264())
-dash.auto_generate_representations([1080,720,480])
+dash.auto_generate_representations()
 dash.generate_hls_playlist()
 dash.output(outDest, monitor = monitor)
 

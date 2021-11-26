@@ -6,12 +6,12 @@ from mpegdash.parser import MPEGDASHParser
 
 
 # Parse from file path
-mpd_path = './tests/mpd-samples/sample-001.mpd'
-# mpd = MPEGDASHParser.parse(mpd_path)
+mpd_path = 'video.mp4'
+mpd = MPEGDASHParser.parse(mpd_path)
 
 # Parse from url
 mpd_url = 'http://yt-dash-mse-test.commondatastorage.googleapis.com/media/motion-20120802-manifest.mpd'
-mpd = MPEGDASHParser.parse(mpd_url)
+# mpd = MPEGDASHParser.parse(mpd_url)
 
 # Parse from string
 mpd_string = '''
@@ -33,4 +33,4 @@ profiles="urn:mpeg:dash:profile:isoff-on-demand:2011" type="static">
 # mpd = MPEGDASHParser.parse(mpd_string)
 
 # Write to xml file
-MPEGDASHParser.write(mpd, 'output2.mpd')
+MPEGDASHParser.write(mpd, 'output_video.mpd')
