@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Adaptive Streaming in HTML5</title>
+  <script src="js/dash.all.js"></script>
+  <!-- <style>
+                video {
+                  width: 80%;
+                  height: 80%;
+                }
+                </style> -->
+</head>
+
+<body onload="start_func()">
+  <h1>Adaptive Streaming with HTML5</h1>
+
+  <script>
+    window.muxPlayerInitTime = Date.now();
+  </script>
+
+  <video id="my-player" controls width=80% height=80% />
+
+  <script>
+    function start_func() {
+      // Initialize Mux Data monitoring by passing in the "id" attribute of your video player
+
+      // const videoEl = document.querySelector('#my-player');
+      // const videoEl = document.querySelector('#videoplayer');
+      // const dashjsPlayer = dashjs.MediaPlayer().create();
+      // dashjsPlayer.initialize(videoEl, 'https://dash.akamaized.net/envivio/EnvivioDash3/manifest.mpd', true);
+      // dashjsPlayer.initialize(videoEl, './testfiles/output3.mpd', true);
+
+      const videoEl = document.querySelector('#my-player');
+      var context = new Dash.di.DashContext();
+      // var url = "./testfiles/output3.mpd";
+      var url = "https://dash.akamaized.net/envivio/EnvivioDash3/manifest.mpd"
+      var dashjsPlayer = new MediaPlayer(context);
+      dashjsPlayer.startup();
+      dashjsPlayer.attachView(videoEl);
+      dashjsPlayer.attachSource(url);
+
+      mux.monitor(videoEl, {
+        debug: true,
+        dashjs: dashjsPlayer,
+        data: {
+          env_key: '', // required
+          // Metadata fields
+          player_name: 'Main Player', // any arbitrary string you want to use to identify this player
+          player_init_time: window.muxPlayerInitTime // ex: 1451606400000
+          // ...
+        }
+      });
+    }
+  </script>
+
+  <!-- <script>
+            // setup the video element and attach it to the Dash player
+            function setupVideo() {
+              // var url = "file:///home/vrutik/Networks/Project/dash/testfiles/output3.mpd";
+              var url = "./testfiles/output3.mpd";
+              // var url = "http://yt-dash-mse-test.commondatastorage.googleapis.com/media/motion-20120802-manifest.mpd";
+              var context = new Dash.di.DashContext();
+              var player = new MediaPlayer(context);
+                              player.startup();
+                              player.attachView(document.querySelector("#videoplayer"));
+                              player.attachSource(url);
+            }
+            </script> -->
+
+  <!-- <video id="my-player" controls></video> -->
+</body>
+
+</html>
