@@ -1,4 +1,5 @@
 import os
+import math
 from typing import Dict, Optional
 import asyncio
 from aioquic.quic import configuration
@@ -19,27 +20,41 @@ class ImgServerProtocol(QuicConnectionProtocol):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.f = None
+        self._ack_waiter: Optional[asyncio.Future[None]] = None
+
      
     def send_data(self, file_name) -> None:
         f = open(file_name, "rb")
-        buffer_size = 2048
+        buffer_size = 1048576
         data = f.read(buffer_size)
         stream_id = self._quic.get_next_available_stream_id()
+        stream_end = False
         print("Sending data")
-        while data:
-            self._quic.send_stream_data(stream_id, data, False)
+        num_packets = math.ceil(os.path.getsize(file_name)/buffer_size)
+        print("Size is", os.path.getsize(file_name),"buffer is", buffer_size, "num_packets=", num_packets)
+        counter = 1
+        while (data):
+            if counter == num_packets:
+                print("Set stream end to True!")
+                stream_end = True
+            self._quic.send_stream_data(stream_id, data, stream_end)
             self.transmit()
             data = f.read(buffer_size)
-        print("Finished Sending")
-        self.close()
+            counter += 1
 
-    def quic_event_received(self, event: QuicEvent):
+        waiter = self._loop.create_future()
+        self._ack_waiter = waiter
+
+        # self.close()
+        return asyncio.shield(waiter)
+            
+    def quic_event_received(self, event: QuicEvent) -> None:
         if isinstance(event, StreamDataReceived):
-            self.f = 1
-
-            data = event.data
-            print("Data", data)
-            print("Writing data with stream id", event.stream_id)
+            response = event.data
+            print(response.decode())
+            waiter = self._ack_waiter
+            self._ack_waiter = None
+            # waiter.set_result(None)
             self.send_data("data/video.mp4")
 
 class SessionTicketStore:
@@ -58,7 +73,7 @@ class SessionTicketStore:
 
 
 if __name__ == "__main__":
-    HOST = "127.0.0.1"
+    HOST = "10.7.19.226"
     PORT = 12345
     ROOT_PATH = os.getcwd()
     CERT_FOLDER = os.path.join(ROOT_PATH, "certs")

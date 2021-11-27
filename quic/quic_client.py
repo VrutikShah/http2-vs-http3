@@ -1,6 +1,7 @@
+import math
 import os
 import ssl
-from typing import cast
+from typing import Optional, cast
 
 from aioquic.asyncio.protocol import QuicConnectionProtocol
 
@@ -16,24 +17,32 @@ class ImgClient(QuicConnectionProtocol):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.f = None
+        self._ack_waiter: Optional[asyncio.Future[None]] = None
 
     async def send_data(self, file_name) -> None:
-        data = file_name
+        data = file_name.encode()
         stream_id = self._quic.get_next_available_stream_id()
-        self._quic.send_stream_data(stream_id, data.encode(), False)
+        stream_end = True
+        self._quic.send_stream_data(stream_id, data, stream_end)
         self.transmit()
-        print(f"Sending data = {data} to server")
+        print(f"Sent {data} to server")
 
+        waiter = self._loop.create_future()
+        self._ack_waiter = waiter
+
+        return await asyncio.shield(waiter)
 
     def quic_event_received(self, event: QuicEvent):
         if isinstance(event, StreamDataReceived):
             if self.f is None:
                 print("Opening for the first time")
                 self.f = open("downloads/video.mp4", 'w+b')
-
             data = event.data
             self.f.write(data)
-
+            if event.end_stream:
+                self._quic.send_stream_data(event.stream_id, "Finished writing to file".encode(), True)
+                self.f.close()
+                print("Finished writing to file")
 
 async def run(configuration: QuicConfiguration, host: str, port: int) -> None:
     print(f"Connecting to {host}:{port}")
@@ -51,7 +60,7 @@ async def run(configuration: QuicConfiguration, host: str, port: int) -> None:
 
 
 if __name__ == "__main__":
-    HOST = "127.0.0.1"
+    HOST = "10.7.19.226"
     PORT = 12345
     BUFFER_SIZE = 1024
     ROOT_PATH = os.getcwd()
