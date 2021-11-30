@@ -8,22 +8,20 @@ from aioquic.quic.configuration import QuicConfiguration
 from aioquic.quic.events import QuicEvent, StreamDataReceived
 from aioquic.tls import SessionTicket
 
-from utils import get_downloaded_fname_client
-
 try:
     import uvloop
 except ImportError:
     uvloop = None
 
 
-class ImgServerProtocol(QuicConnectionProtocol):
+class StreamingServer(QuicConnectionProtocol):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.f = None
         self._ack_waiter: Optional[asyncio.Future[None]] = None
 
      
-    def send_data(self, file_name) -> None:
+    async def send_data(self, file_name) -> None:
         f = open(file_name, "rb")
         buffer_size = 1048576
         data = f.read(buffer_size)
@@ -34,6 +32,7 @@ class ImgServerProtocol(QuicConnectionProtocol):
         print("Size is", os.path.getsize(file_name),"buffer is", buffer_size, "num_packets=", num_packets)
         counter = 1
         while (data):
+            print(f"Sending {counter} packet")
             if counter == num_packets:
                 print("Set stream end to True!")
                 stream_end = True
@@ -46,16 +45,16 @@ class ImgServerProtocol(QuicConnectionProtocol):
         self._ack_waiter = waiter
 
         # self.close()
-        return asyncio.shield(waiter)
+        return await asyncio.shield(waiter)
             
     def quic_event_received(self, event: QuicEvent) -> None:
         if isinstance(event, StreamDataReceived):
             response = event.data
             print(response.decode())
-            waiter = self._ack_waiter
-            self._ack_waiter = None
-            # waiter.set_result(None)
+            # waiter = self._ack_waiter
+            # self._ack_waiter = None
             self.send_data("data/video.mp4")
+            # waiter.set_result(None)
 
 class SessionTicketStore:
     """
@@ -100,7 +99,7 @@ if __name__ == "__main__":
             HOST,
             PORT,
             configuration=configuration,
-            create_protocol=ImgServerProtocol,
+            create_protocol=StreamingServer,
             session_ticket_fetcher=ticket_store.pop,
             session_ticket_handler=ticket_store.add
         )
