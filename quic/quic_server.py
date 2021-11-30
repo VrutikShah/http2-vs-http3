@@ -21,7 +21,7 @@ class StreamingServer(QuicConnectionProtocol):
         self._ack_waiter: Optional[asyncio.Future[None]] = None
 
      
-    async def send_data(self, file_name) -> None:
+    def send_data(self, file_name) -> None:
         f = open(file_name, "rb")
         buffer_size = 1048576
         data = f.read(buffer_size)
@@ -45,7 +45,7 @@ class StreamingServer(QuicConnectionProtocol):
         self._ack_waiter = waiter
 
         # self.close()
-        return await asyncio.shield(waiter)
+        return asyncio.shield(waiter)
             
     def quic_event_received(self, event: QuicEvent) -> None:
         if isinstance(event, StreamDataReceived):

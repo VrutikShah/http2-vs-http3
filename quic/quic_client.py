@@ -38,9 +38,9 @@ class StreamingClient(QuicConnectionProtocol):
             data = event.data
             self.f.write(data)
             if event.end_stream:
-                self._quic.send_stream_data(event.stream_id, "Finished writing to file".encode(), True)
                 self.f.close()
                 print("Finished writing to file")
+                return
 
 async def run(configuration: QuicConfiguration, host: str, port: int) -> None:
     print(f"Connecting to {host}:{port}")
